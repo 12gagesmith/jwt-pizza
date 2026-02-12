@@ -14,8 +14,8 @@ test('orderPizzaAndVerify', async ({ page }) => {
     await page.getByRole('link', { name: 'Order' }).click();
     await page.waitForLoadState('networkidle');
     await page.getByRole('combobox').waitFor({ state: 'visible' });
-    await page.getByRole('combobox').selectOption('19');
-    await page.getByRole('link', { name: 'Image Description Veggie A' }).click();
+    await page.getByRole('combobox').selectOption('2');
+    await page.getByRole('link', { name: 'Image Description Pepperoni' }).click();
     await page.getByRole('button', { name: 'Checkout' }).click();
     await page.getByRole('button', { name: 'Pay now' }).click();
     await page.getByRole('button', { name: 'Verify' }).waitFor({ state: 'visible' });

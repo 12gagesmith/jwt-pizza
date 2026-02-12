@@ -26,13 +26,13 @@ test('CreateAndCloseStore', async ({page}) => {
     await page.getByLabel('Global').getByRole('link', { name: 'Franchise' }).click();
     await page.waitForLoadState('networkidle');
     await expect(page.getByText('Everything you need to run an')).toBeVisible();
+    
     await page.getByRole('button', { name: 'Create store' }).click();
-
     await page.getByRole('textbox', { name: 'store name' }).click();
     await page.getByRole('textbox', { name: 'store name' }).fill('Test Store');
     await page.getByRole('button', { name: 'Create' }).click();
     await expect(page.getByRole('cell', { name: 'Test Store' })).toBeVisible();
-    await page.locator('tr:nth-child(9) > .px-6.py-4.text-end.text-sm.font-medium > .px-2').click();
+    await page.getByRole('row', { name: 'Test Store 0 ₿ Close' }).getByRole('button').click();
     await page.getByRole('button', { name: 'Close' }).click();
     await expect(page.getByRole('cell', { name: 'Test Store' })).toBeHidden();
 });
