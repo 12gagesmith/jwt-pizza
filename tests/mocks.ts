@@ -2,7 +2,7 @@ import { expect } from 'playwright-test-coverage';
 import { Page } from '@playwright/test';
 import { Role, User } from '../src/service/pizzaService';
 
-async function basicInit(page: Page) {
+export async function basicInit(page: Page) {
     let loggedInUser: User | undefined;
     const validUsers: Record<string, User> = {
         'a@jwt.com': { 
