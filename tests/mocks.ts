@@ -50,8 +50,7 @@ export async function basicInit(page: Page) {
           };
           await route.fulfill({ json: registerRes });
         }
-      }
-      else if (route.request().method() === 'PUT') {
+      } else if (route.request().method() === 'PUT') {
         const user = validUsers[req.email];
         if (!user || user.password !== req.password) {
           await route.fulfill({ status: 401, json: { error: 'Unauthorized' } });
@@ -63,8 +62,7 @@ export async function basicInit(page: Page) {
           token: 'abcdef',
         };
         await route.fulfill({ json: loginRes });
-      }
-      else if (route.request().method() === 'DELETE') {
+      } else if (route.request().method() === 'DELETE') {
         loggedInUser = undefined;
         await route.fulfill({ status: 204 });
       }
@@ -119,15 +117,53 @@ export async function basicInit(page: Page) {
       await route.fulfill({ json: franchiseRes });
     });
   
-    // Order a pizza.
+    // Order a pizza (and get orders if admin)
     await page.route('*/**/api/order', async (route) => {
       const orderReq = route.request().postDataJSON();
-      const orderRes = {
-        order: { ...orderReq, id: 23 },
-        jwt: 'eyJpYXQ',
-      };
-      expect(route.request().method()).toBe('POST');
-      await route.fulfill({ json: orderRes });
+      if (route.request().method() === 'POST') {
+        const orderRes = {
+          order: { ...orderReq, id: 23 },
+          jwt: 'eyJpYXQ',
+        };
+        expect(route.request().method()).toBe('POST');
+        await route.fulfill({ json: orderRes });
+      } else if (route.request().method() === 'GET') {
+        const ordersRes = {
+            "dinerId": 1,
+            "orders": [
+                {
+                    "id": 1,
+                    "franchiseId": 1,
+                    "storeId": 1,
+                    "date": "2026-01-14T22:11:32.000Z",
+                    "items": [
+                        {
+                            "id": 1,
+                            "menuId": 2,
+                            "description": "Pepperoni",
+                            "price": 0.0042
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "franchiseId": 1,
+                    "storeId": 1,
+                    "date": "2026-01-15T18:21:47.000Z",
+                    "items": [
+                        {
+                            "id": 2,
+                            "menuId": 3,
+                            "description": "Margarita",
+                            "price": 0.0042
+                        }
+                    ]
+                }
+            ],
+            "page": 1
+        };
+        await route.fulfill({ json: ordersRes });
+      }
     });
   
     await page.goto('/');
