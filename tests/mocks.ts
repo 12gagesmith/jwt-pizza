@@ -95,6 +95,33 @@ export async function basicInit(page: Page) {
       expect(route.request().method()).toBe('GET');
       await route.fulfill({ json: menuRes });
     });
+
+    await page.route('*/**/api/franchise/*', async (route) => {
+      const franchiseRes = {
+        "id": 1,
+        "name": "pizzaPocket",
+        "admins": [
+            {
+                "id": 2,
+                "name": "FranchiseePerson",
+                "email": "f@jwt.com"
+            }
+        ],
+        "stores": [
+            {
+                "id": 1,
+                "name": "SLC",
+                "totalRevenue": 0.0206
+            },
+            {
+                "id": 2,
+                "name": "BYU",
+                "totalRevenue": 0.0332
+            }
+        ]
+      };
+      await route.fulfill({ json: franchiseRes });
+    });
   
     // Standard franchises and stores
     await page.route(/\/api\/franchise(\?.*)?$/, async (route) => {
@@ -113,6 +140,7 @@ export async function basicInit(page: Page) {
           { id: 4, name: 'topSpot', stores: [] },
         ],
       };
+      console.log('In standard franchise route');
       expect(route.request().method()).toBe('GET');
       await route.fulfill({ json: franchiseRes });
     });

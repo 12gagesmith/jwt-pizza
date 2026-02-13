@@ -1,7 +1,8 @@
 import {test, expect} from 'playwright-test-coverage';
+import {basicInit} from './mocks';
 
 test('viewFranchisePage', async ({page}) => {
-    await page.goto('http://localhost:5173/');
+    await basicInit(page);
     await page.getByRole('link', { name: 'Login' }).click();
     await page.getByRole('textbox', { name: 'Email address' }).fill('f@jwt.com');
     await page.getByRole('textbox', { name: 'Password' }).click();
