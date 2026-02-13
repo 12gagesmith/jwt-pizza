@@ -120,7 +120,7 @@ export async function basicInit(page: Page) {
             }
         ]
       };
-      await route.fulfill({ json: franchiseRes });
+      await route.fulfill({ json: [franchiseRes] });
     });
   
     // Standard franchises and stores
