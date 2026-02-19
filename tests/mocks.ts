@@ -27,6 +27,29 @@ export async function basicInit(page: Page) {
             roles: [{ role: Role.Diner }] 
         }
     };
+    const validUsersByID: Record<string, User> = {
+      '1': { 
+          id: '1', 
+          name: 'AdminPerson', 
+          email: 'a@jwt.com', 
+          password: 'admin', 
+          roles: [{ role: Role.Admin }]
+      },
+      '2': { 
+          id: '2', 
+          name: 'FranchiseePerson', 
+          email: 'f@jwt.com', 
+          password: 'franchisee', 
+          roles: [{ role: Role.Franchisee }]
+      },
+      '3': { 
+          id: '3', 
+          name: 'DinerPerson', 
+          email: 'd@jwt.com', 
+          password: 'a', 
+          roles: [{ role: Role.Diner }] 
+      }
+  };
   
     // Auth endpoints
     await page.route('*/**/api/auth', async (route) => {
@@ -43,6 +66,7 @@ export async function basicInit(page: Page) {
             roles: [{ role: Role.Diner }],
           };
           validUsers[req.email] = newUser;
+          validUsersByID[newUser.id] = newUser;
           loggedInUser = newUser;
           const registerRes = {
             user: newUser,
@@ -72,6 +96,27 @@ export async function basicInit(page: Page) {
     await page.route('*/**/api/user/me', async (route) => {
       expect(route.request().method()).toBe('GET');
       await route.fulfill({ json: loggedInUser });
+    });
+
+    // User methods
+    await page.route('*/**/api/user/*', async (route) => {
+      if (route.request().method() === 'PUT') { // Update user
+        const req = route.request().postDataJSON();
+        const userToUpdate = validUsersByID[req.id];
+        userToUpdate.name = req.name || userToUpdate.name;
+        userToUpdate.email = req.email || userToUpdate.email;
+        userToUpdate.password = req.password || userToUpdate.password;
+        validUsers[req.email] = userToUpdate;
+        const updateRes = {
+          user: userToUpdate,
+          token: 'abcdef'
+        }
+        await route.fulfill({ json: updateRes })
+      } else if (route.request().method() === 'DELETE') { // Delete user (admin only)
+        
+      } else if (route.request().method() === 'GET') { // List users (admin only)
+        
+      }
     });
   
     // A standard menu
